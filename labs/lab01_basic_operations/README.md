@@ -407,3 +407,155 @@ Therefore, the ARM Assembly program works correctly.
 What happens if `A - B` becomes negative in unsigned arithmetic?
 
 Write your answer in 1–2 sentences.
+
+---
+
+## Student report
+
+### Name: Illia Holub
+
+### GitHub Username: IllyaGolub0
+
+### Variant 4
+
+| Task | Number |
+|---|---|
+| Decimal numbers | 100₁₀, 229₁₀ |
+| Binary numbers | 01100100₂, 11100101₂ |
+| Hexadecimal numbers | 64₁₆, E5₁₆ |
+| Assembly values | A = 100, B = 37 |
+
+---
+
+## 1. Manual conversions
+
+For each decimal number:
+
+```text
+
+100₁₀ = 64 + 32 + 4 = 01100100₂
+100₁₀ = 100 : 16 = 64₁₆
+100₁₀ = 01100100₂ = 64₁₆
+
+229₁₀ = 128 + 64 + 32 + 4 + 1 = 11100101₂
+229₁₀ = 229 : 16 = E5₁₆
+229₁₀ = 11100101₂ = E5₁₆
+```
+
+For each binary number:
+
+```text
+01100100₂ = 0×128 + 1×64 + 1×32 + 0×16 + 0×8 + 0×4 +0×2 + 0×1 = 100₁₀
+01100100₂ = 0110 0100 = 64₁₆
+01100100₂ = 100₁₀ = 64₁₆
+
+11100101₂ = 1×128 + 1×64 + 1×32 + 0×16 + 0×8 + 1×4 +0×2 + 1×1 = 229₁₀
+11100101₂ = 1110 0101 = E5₁₆
+11100101₂ = 229₁₀ = E5₁₆
+```
+
+For each hexadecimal number:
+
+```text
+64₁₆ = 6×16 + 4×16 = 100₁₀
+64₁₆ = 0110 0100 = 01100100₂
+64₁₆ = 100₁₀ = 01100100₂
+
+E5₁₆ = 14×16 + 5×16 = 229₁₀
+E5₁₆ = 1110 0101 = 01100100₂
+E5₁₆ = 229₁₀ = 11100101₂
+```
+---
+
+## 2. Manual addition and subtraction in column form
+
+**Assembly values:**
+
+```text
+A = 100
+B = 37
+```
+
+### Decimal column form
+
+```text
+   100
++   37
+------
+   137
+```
+
+```text
+   100
+-   37
+------
+    63
+```
+
+### Binary column form
+
+```text
+  01100100
++ 00100101
+----------
+  10001001
+```
+
+```text
+  01100100
+- 00100101
+----------
+  00111111
+```
+
+### Hexadecimal column form
+
+```text
+  64
++ 25
+----
+  89
+```
+
+```text
+  64
+- 25
+----
+  3F
+```
+
+---
+
+## 3. ARM Assembly source code
+
+The source code is located in the main.s file.
+
+---
+
+## 4. Debugging
+
+| Register | Meaning | Expected value | Debugger value |
+|---|---|---:|---:|
+| R0 | A | 100 | 0x64 |
+| R1 | B | 37 | 0x25 |
+| R2 | A + B | 137 | 0x89 |
+| R3 | A - B | 63 | 0x3F |
+
+---
+
+## 5. Short Conclusion
+
+The values in registers R0 (0x64) and R1 (0x25) match the input numbers 100 and 37 from my variant. 
+The calculated values in R2 (0x89) and R3 (0x3F) perfectly match my manual addition and subtraction results (137 and 63). 
+Therefore, the ARM Assembly program works correctly.
+
+---
+
+## Optional question
+
+What happens if A - B becomes negative in unsigned arithmetic?
+
+In unsigned arithmetic, a negative result causes an underflow, making the value wrap around to a very large positive number. 
+In an ARM processor, this also clears the Carry (C) flag to indicate that a borrow occurred.
+
+---

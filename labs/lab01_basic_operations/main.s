@@ -8,7 +8,11 @@
         .thumb_func
 
 main:
-        nop     @Provide your code here
+        mov r0, #100      @ R0 = A
+        mov r1,   #37     @ R1 = B
+
+        add r2, r0, r1    @ R2 = A + B
+        sub r3, r0, r1    @ R3 = A - B    
 
 stop:
         nop
