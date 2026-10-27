@@ -266,3 +266,82 @@ Preserve these instructions. Include `screenshots/debug_registers.png` and
 Open a PR from `lab02` to `master` in your own fork and send the instructor its
 URL. Merge only after instructor approval, as described in the student workflow.
 Do not commit generated build files.
+
+---
+
+## Student report
+
+### Name: Illia Holub
+
+### GitHub Username: IllyaGolub0
+
+### Variant 4
+
+| X | Y |
+|---:|---:|
+| 100 | 37 |
+
+---
+
+## 1. Guided examples observations
+
+**Example 1 (`memory_store`):** `R0` holds the RAM address of `value` (`0x20000000`), and `R1` holds `42` (`0x2A`). After `str r1, [r0]`, the 32-bit word in RAM becomes `42`, which is stored in little-endian byte order as `2A 00 00 00`.
+
+**Example 2 (`memory_load_sizes`):** The word `0x12345678` is stored in memory at increasing addresses as `78 56 34 12` (least significant byte first). `ldr r1, [r0]` loads the full word `0x12345678`; `ldrb r2, [r0]` loads the lowest byte and zero-extends it to `0x00000078`; `ldrh r3, [r0]` loads the lowest halfword and zero-extends it to `0x00005678`.
+
+**Example 3 (`memory_store_sizes`):** Starting from `00 00 00 00`, `strb r1, [r0]` (`0x12`) changes memory to `12 00 00 00`. Next, `strb r1, [r0, #1]` (`0x34`) updates the second byte to `12 34 00 00`. Then `strh r1, [r0, #2]` (`0xABCD`) writes the upper halfword, producing `12 34 CD AB` (`R2` reads `0xABCD3412`). Finally, `str r1, [r0]` (`0x12345678`) overwrites all four bytes with `78 56 34 12`.
+
+**Example 4 (`memory_addressing`):**
+  * `ldr r1, [r0, #4]` (offset): reads from `base + 4` (loads `20`), leaves `R0` unchanged at `base`.
+  * `ldr r2, [r0], #4` (post-indexed): reads from `base` (loads `10`), then updates `R0` to `base + 4`.
+  * `ldr r3, [r0, #4]!` (pre-indexed): updates `R0` first to `base + 8`, then reads from `base + 8` (loads `30`).
+
+**Example 5 (`memory_variables`):** Variables `A`, `B`, and `C` are allocated in RAM using `.space 4`. The program stores `42` into `A` and `15` into `B`, loads them back into `R1` and `R2`, computes `R3 = 57`, and stores `57` (`39 00 00 00`) into `C`.
+
+---
+
+## 2. ARM Assembly source code
+
+The source code is located in the main.s file.
+
+---
+
+## 3. Predictions
+
+**X (stored in A):** `100` decimal = `0x00000064` hex -> Little-endian bytes: `64 00 00 00`
+
+**Y (stored in B):** `37` decimal = `0x00000025` hex -> Little-endian bytes: `25 00 00 00`
+
+**C = A + B:** `100 + 37 = 137` decimal = `0x00000089` hex -> Little-endian bytes: `89 00 00 00`
+
+---
+
+## 4. Debugging
+
+| Object | Address | Expected word | Expected bytes, lowest address first | Observed word |
+|---|---|---|---|---|
+| A | `0x20000000` | `0x00000064` (100) | `64 00 00 00` | `0x00000064` |
+| B | `0x20000004` | `0x00000025` (37) | `25 00 00 00` | `0x00000025` |
+| C | `0x20000008` | `0x00000089` (137) | `89 00 00 00` | `0x00000089` |
+
+---
+
+## 5. Theoretical Questions
+
+1. **Difference between an address and its contents:**
+   An address is the numerical location (pointer) of a byte in memory (e.g., `0x20000000`, loaded into a register via `ldr r0, =A`), whereas its contents are the actual data values stored at that memory location (e.g., `100` or `0x64`, accessed using square brackets via `ldr r1, [r0]` or `str r1, [r0]`).
+2. **Difference between offset, pre-indexed, and post-indexed addressing:**
+   
+   **Offset addressing (`[r0, #4]`):** Calculates the effective address by adding the offset to the base register (`r0 + 4`), accesses memory there, and leaves the base register `r0` unchanged.
+   
+   **Pre-indexed addressing (`[r0, #4]!`):** Updates the base register first (`r0 = r0 + 4`), and then uses the new value as the effective address for the memory access.
+   
+   **Post-indexed addressing (`[r0], #4`):** Accesses memory at the current address in the base register `r0` first, and then updates the base register afterward (`r0 = r0 + 4`).
+
+---
+
+## 6. Short Conclusion
+
+Experimental results fully matched the predictions for my variant ($X = 100$, $Y = 37$). Memory inspection confirmed little-endian byte ordering in SRAM, and load/store operations correctly computed and stored the expected sum of 137 (0x89).
+
+---
